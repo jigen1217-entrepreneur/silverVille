@@ -1,56 +1,63 @@
-import axios from 'axios';
+/**
+ * API 클라이언트 — axios 대신 fetch 사용 (React Native 호환)
+ */
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000/api';
 
-export const apiClient = axios.create({
-  baseURL: BASE_URL,
-  timeout: 10000,
-  headers: { 'Content-Type': 'application/json' },
-});
+// TODO: AsyncStorage에서 토큰 읽기
+let authToken: string | null = null;
 
-/** 요청 인터셉터 — JWT 자동 첨부 */
-apiClient.interceptors.request.use((config) => {
-  // TODO: AsyncStorage에서 토큰 읽어 헤더에 추가
-  return config;
-});
+async function request<T>(
+  method: string,
+  path: string,
+  body?: unknown
+): Promise<T> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
 
-/** 응답 인터셉터 — 401 처리 */
-apiClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // TODO: 토큰 갱신 또는 로그아웃 처리
-    }
-    return Promise.reject(error);
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : undefined,
+  });
+
+  if (res.status === 401) {
+    // TODO: 토큰 갱신 또는 로그아웃 처리
+    throw new Error('Unauthorized');
   }
-);
+
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json() as Promise<T>;
+}
 
 export const dietApi = {
   analyze: (imageBase64: string) =>
-    apiClient.post('/diet/analyze', { image: imageBase64 }),
+    request('POST', '/diet/analyze', { image: imageBase64 }),
   record: (data: { mindScore: number; items: string[]; fertilizer: number }) =>
-    apiClient.post('/diet/record', data),
+    request('POST', '/diet/record', data),
 };
 
 export const walkApi = {
-  start: () => apiClient.post('/walk/start'),
-  update: (steps: number) => apiClient.put('/walk/update', { steps }),
-  complete: (steps: number) => apiClient.post('/walk/complete', { steps }),
-  getQuiz: () => apiClient.get('/walk/quiz'),
+  start: () => request('POST', '/walk/start'),
+  update: (steps: number) => request('PUT', '/walk/update', { steps }),
+  complete: (steps: number) => request('POST', '/walk/complete', { steps }),
+  getQuiz: () => request('GET', '/walk/quiz'),
   submitAnswer: (quizId: string, answer: string) =>
-    apiClient.post('/walk/answer', { quizId, answer }),
+    request('POST', '/walk/answer', { quizId, answer }),
 };
 
 export const baristaApi = {
-  getSession: () => apiClient.get('/barista/session'),
+  getSession: () => request('GET', '/barista/session'),
   submitAnswer: (sessionId: string, menuId: string) =>
-    apiClient.post('/barista/answer', { sessionId, menuId }),
+    request('POST', '/barista/answer', { sessionId, menuId }),
 };
 
 export const familyApi = {
-  invite: () => apiClient.post('/family/invite'),
-  link: (inviteCode: string) => apiClient.post('/family/link', { inviteCode }),
-  getMessages: () => apiClient.get('/family/messages'),
+  invite: () => request('POST', '/family/invite'),
+  link: (inviteCode: string) => request('POST', '/family/link', { inviteCode }),
+  getMessages: () => request('GET', '/family/messages'),
   sendMessage: (audioUri: string) =>
-    apiClient.post('/family/message', { audioUri }),
+    request('POST', '/family/message', { audioUri }),
 };

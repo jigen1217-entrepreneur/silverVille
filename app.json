@@ -1,0 +1,48 @@
+{
+  "expo": {
+    "name": "SilverVille",
+    "slug": "silverVille",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "scheme": "silverville",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#E8F5E9"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "ai.popupstudio.silverVille",
+      "infoPlist": {
+        "NSCameraUsageDescription": "식단 촬영을 위해 카메라를 사용합니다.",
+        "NSMotionUsageDescription": "걸음 수 측정을 위해 모션 센서를 사용합니다."
+      }
+    },
+    "android": {
+      "package": "ai.popupstudio.silverVille",
+      "adaptiveIcon": {
+        "backgroundColor": "#E8F5E9"
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.ACTIVITY_RECOGNITION"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "식단 촬영을 위해 카메라를 사용합니다."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "newArchEnabled": true
+  }
+}

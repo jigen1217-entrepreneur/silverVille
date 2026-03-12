@@ -1,0 +1,22 @@
+{
+  "SilverVille": {
+    "phase": "design",
+    "feature": "SilverVille",
+    "planDoc": "docs/01-plan/features/SilverVille.plan.md",
+    "designDoc": "docs/02-design/features/SilverVille.design.md",
+    "startedAt": "2026-03-12T00:00:00Z",
+    "designCompletedAt": "2026-03-12T00:00:00Z",
+    "history": [
+      {
+        "phase": "plan",
+        "completedAt": "2026-03-12T00:00:00Z",
+        "notes": "8-agent council plan completed with 20 FR, 28 API endpoints, 10 entities"
+      },
+      {
+        "phase": "design",
+        "completedAt": "2026-03-12T00:00:00Z",
+        "notes": "8-agent parallel design: 9 documents, 4406 total lines, 20/20 FR covered"
+      }
+    ]
+  }
+}
